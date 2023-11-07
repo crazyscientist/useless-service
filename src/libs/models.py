@@ -3,6 +3,7 @@ import enum
 import typing
 
 from pydantic import BaseModel
+from pydantic.types import UUID4
 
 
 class SwitchState(enum.StrEnum):
@@ -26,3 +27,4 @@ class AuditModel(BaseModel):
     action: AuditAction
     switch: typing.Optional[SwitchModel] = None
     details: typing.Optional[str] = None
+    transaction_id: typing.Optional[UUID4] = None

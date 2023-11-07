@@ -79,6 +79,6 @@ async def set_switch_state(switch_name: str,
                       timestamp=datetime.datetime.now(tz=datetime.UTC),
                       action=AuditAction.CHANGED,
                       switch=switch,
-                      details=f"Switch was toggled"
+                      details="Switch was toggled"
                   ))
     return switch
