@@ -20,6 +20,7 @@ class AuditAction(enum.StrEnum):
     CHANGED = "changed"
     REQUEST = "request"
     APPROVED = "approved"
+    DENIED = "denied"
 
 
 class AuditModel(BaseModel):

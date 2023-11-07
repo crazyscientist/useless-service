@@ -74,7 +74,7 @@ async def set_switch_state(switch_name: str,
     switch = SwitchModel(name=switch_name, state=state)
 
     await publish(settings=settings.amqp,
-                  routing_key=RoutingKey(switch=switch_name, action="changed"),
+                  routing_key=RoutingKey(switch=switch_name, action=AuditAction.CHANGED),
                   message=AuditModel(
                       timestamp=datetime.datetime.now(tz=datetime.UTC),
                       action=AuditAction.CHANGED,
