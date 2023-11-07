@@ -1,0 +1,68 @@
+services:
+  redis:
+    image: redis:latest
+  rabbit:
+    image: rabbitmq:latest
+    healthcheck:
+      test: rabbitmq-diagnostics -q check_running
+      interval: 5s
+      timeout: 30s
+      retries: 5
+  switch:
+    build:
+      context: .
+      dockerfile: docker/switch.Dockerfile
+    image: useless-machine/switch
+    depends_on:
+      - rabbit
+      - redis
+    ports:
+      - "8000:80"
+    environment:
+      REDIS: "redis://redis"
+      AMQP__DSN: "amqp://guest@rabbit/"
+  observer:
+    build:
+      context: .
+      dockerfile: docker/observer.Dockerfile
+    image: useless-machine/observer
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      AMQP__DSN: "amqp://guest@rabbit/"
+  manager:
+    build:
+      context: .
+      dockerfile: docker/manager.Dockerfile
+    image: useless-machine/manager
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      AMQP__DSN: "amqp://guest@rabbit/"
+      BASE_URL: "http://switch"
+  worker:
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+    image: useless-machine/worker
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      AMQP__DSN: "amqp://guest@rabbit/"
+      BASE_URL: "http://switch"
+  auditor:
+    build:
+      context: .
+      dockerfile: docker/auditor.Dockerfile
+    image: useless-machine/auditor
+    depends_on:
+      rabbit:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      AMQP__DSN: "amqp://guest@rabbit/"
+      REDIS: "redis://redis"

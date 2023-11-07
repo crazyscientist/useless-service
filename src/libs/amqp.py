@@ -30,7 +30,7 @@ class RoutingKey:
 async def connect(settings: AmqpConfig) -> Connection:
     connection = getattr(THREAD_LOCAL, CONN_NAME, None)
     if connection is None:
-        connection = await connect_robust(url=str(settings.dsn))
+        connection = await connect_robust(url=str(settings.dsn), timeout=settings.timeout)
         setattr(THREAD_LOCAL, CONN_NAME, connection)
 
     return connection

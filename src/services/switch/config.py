@@ -9,7 +9,7 @@ class Config(BaseSettings):
     redis: RedisDsn = "redis://localhost"
     amqp: AmqpConfig = AmqpConfig()
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
 
 
 settings = Config()

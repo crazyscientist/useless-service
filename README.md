@@ -3,6 +3,23 @@
 Implement of a [useless machine](https://youtu.be/mqvh3R8nKSA) as an event-driven web app, which
 needs to comply to a fictitious overly bureaucratic process.
 
+## Quick Start
+
+To quickly spool up the application, please use Docker Compose. E.g. on Ubuntu systems:
+
+```shell
+sudo apt install docker-compose-v2
+docker compose up
+```
+
+This will expose a webserver on port 8000 on your host:
+
+```shell
+curl http://localhost:8000/switch-1
+
+  {"name":"switch-1","state":"off"}
+```
+
 ## Business Process
 
 ![](http://www.plantuml.com/plantuml/svg/ZP9FIyD04CNlyoc6Uj5316rF4QJz02hu1o-vRBAJRMZSYPj95SJlxaut9g0MF6NvvRsTzuPTzsA232yjv4yzXHnDZ_Gk5Bnf0JfJxOmZt7GTVW1YVbT6qNxKbImN2c-CDsvcbygUEUncj5Iq6MmZFB4LHBXuU6kasYwKdVQ7ynd09y1t1in2TZtzmfEsyPG7ibTwE2-vjPZZ8plN4YOHieT9dmtHhJcFE6zPceeA7xSWyLDjZNS4QaY3jSuHwpsz3jGBIXmUkTEv1tbci-HS_ktKRGRU4nflaOEbKFZvadgi0Ng1vlzV-nW-gGhFTGrZ1Pk2h3Hjnq6cWB-nplg9r-HjV1fV)
