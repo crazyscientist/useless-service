@@ -13,7 +13,8 @@ async def on_approval(message: AbstractMessage):
     data = AuditModel.model_validate_json(message.body)
 
     async with get_client() as client:
-        response = await client.put(url=urljoin(str(settings.base_url), data.switch.name),
+        response = await client.put(url=urljoin(str(settings.base_url),
+                                                data.switch.name),
                                     json=SwitchState.OFF)
         switch = data.switch
         if response.status_code == 200:

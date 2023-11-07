@@ -7,9 +7,9 @@ from redis.asyncio.client import Redis
 from redis.asyncio.lock import Lock
 
 from ...libs.amqp import publish, subscribe, RoutingKey
-from ...libs.models import SwitchState, SwitchModel, AuditAction, AuditModel
+from ...libs.cache import get_redis
+from ...libs.models import SwitchState, SwitchModel, AuditAction, AuditModel, AuditTransaction
 
-from .cache import get_redis
 from .config import settings
 from .utils import validate_switch_name
 
@@ -82,3 +82,17 @@ async def set_switch_state(switch_name: str,
                       details="Switch was toggled"
                   ))
     return switch
+
+
+@app.get("/{switch_name}/audit-log",
+         dependencies=[Depends(validate_switch_name)])
+async def get_switch_auditlog(switch_name: str,
+                              redis: Redis = Depends(get_redis)) -> list[AuditTransaction]:
+    transactions = await redis.smembers(name=f"auditlog.{switch_name}")
+
+    if transactions:
+        transactions = [AuditTransaction.model_validate_json(t) for t in transactions]
+    else:
+        transactions = []
+
+    return transactions

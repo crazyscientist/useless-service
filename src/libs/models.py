@@ -30,3 +30,14 @@ class AuditModel(BaseModel):
     switch: typing.Optional[SwitchModel] = None
     details: typing.Optional[str] = None
     transaction_id: typing.Optional[UUID4] = None
+
+
+class TransactionDetail(BaseModel):
+    timestamp: datetime.datetime
+    action: AuditAction
+
+
+class AuditTransaction(BaseModel):
+    id: UUID4
+    switch: str
+    details: typing.List[TransactionDetail] = []

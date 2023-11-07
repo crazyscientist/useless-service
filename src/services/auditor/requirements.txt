@@ -1,0 +1,4 @@
+aio-pika
+pydantic
+pydantic-settings
+redis

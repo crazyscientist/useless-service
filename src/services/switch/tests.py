@@ -1,12 +1,13 @@
 import datetime
 from unittest import IsolatedAsyncioTestCase
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
 from ...libs.amqp import publish, RoutingKey
-from ...libs.models import SwitchModel, SwitchState, AuditModel, AuditAction
+from ...libs.cache import get_redis
+from ...libs.models import SwitchModel, SwitchState, AuditModel, AuditAction, AuditTransaction
 from .app import app
-from .cache import get_redis
 from .config import settings
 
 
@@ -57,3 +58,21 @@ class SwitchTest(IsolatedAsyncioTestCase):
         model = AuditModel.model_validate_json(ws_message)
         self.assertEqual(model.action, AuditAction.CHANGED)
         self.assertEqual(model.switch.state, SwitchState.ON)
+
+    async def test_get_auditlog_empty(self):
+        response = self.client.get("/switch-1/audit-log")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+    async def test_get_auditlog(self):
+        redis = await get_redis()
+        await redis.sadd("auditlog.switch-1",
+                         AuditTransaction(id=uuid4(),
+                                          switch="switch-1",
+                                          details=[]).model_dump_json())
+
+        response = self.client.get("/switch-1/audit-log")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["switch"], "switch-1")

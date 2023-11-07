@@ -30,4 +30,5 @@ jobs:
             src/services/switch/tests.py \
             src/services/observer/tests.py \
             src/services/manager/tests.py \
-            src/services/worker/tests.py
+            src/services/worker/tests.py \
+            src/services/auditor/tests.py

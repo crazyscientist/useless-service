@@ -25,7 +25,8 @@ async def on_request(message: AbstractMessage):
         return
 
     async with get_client() as client:
-        response = await client.get(url=urljoin(str(settings.base_url), data.switch.name))
+        response = await client.get(url=urljoin(str(settings.base_url),
+                                                data.switch.name))
         if response.status_code >= 400:
             await publish(settings=settings.amqp,
                           routing_key=RoutingKey(switch=data.switch.name,
