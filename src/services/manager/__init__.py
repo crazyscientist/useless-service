@@ -2,15 +2,11 @@ import datetime
 from urllib.parse import urljoin
 
 from aio_pika.abc import AbstractMessage
-from httpx import AsyncClient
 
 from ...libs.amqp import publish, RoutingKey
 from ...libs.config import settings
+from ...libs.http import get_client
 from ...libs.models import AuditModel, AuditAction, SwitchState, SwitchModel
-
-
-def get_client() -> AsyncClient:
-    return AsyncClient()
 
 
 async def on_request(message: AbstractMessage):

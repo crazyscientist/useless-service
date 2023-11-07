@@ -21,6 +21,7 @@ class AuditAction(enum.StrEnum):
     REQUEST = "request"
     APPROVED = "approved"
     DENIED = "denied"
+    EXECUTED = "executed"
 
 
 class AuditModel(BaseModel):
