@@ -5,4 +5,4 @@ from pydantic_settings import BaseSettings
 class AmqpConfig(BaseSettings):
     dsn: AmqpDsn = "amqp://guest@localhost:5672/"
     exchange: str = "useless-exchange"
-    timeout: int = 60
+    timeout: int = 5

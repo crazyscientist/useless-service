@@ -1,7 +1,7 @@
 import typing
 from uuid import UUID
 
-from aio_pika.abc import AbstractMessage
+from aio_pika import IncomingMessage
 from redis.asyncio import Redis
 
 from ...libs.cache import get_redis
@@ -22,9 +22,10 @@ async def get_transaction(redis: Redis, transaction_id: UUID, switch: typing.Opt
     return AuditTransaction(id=transaction_id, switch=switch, details=[])
 
 
-async def on_action(message: AbstractMessage):
+async def on_action(message: IncomingMessage):
     data = AuditModel.model_validate_json(message.body)
     if data.transaction_id is None:
+        await message.ack()
         return
 
     transaction_key = TRANSACTION_TEMPLATE.format(data.transaction_id)
@@ -37,3 +38,5 @@ async def on_action(message: AbstractMessage):
 
     if data.action in [AuditAction.EXECUTED, AuditAction.DENIED]:
         await redis.sadd(LOG_TEMPLATE.format(data.switch.name), transaction.model_dump_json())
+
+    await message.ack()

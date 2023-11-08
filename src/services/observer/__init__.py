@@ -3,14 +3,15 @@ import datetime
 import random
 import uuid
 
-from aio_pika.abc import AbstractMessage
+from aio_pika import IncomingMessage
 
 from ...libs.amqp import publish, RoutingKey
 from ...libs.config import settings
 from ...libs.models import AuditModel, AuditAction, SwitchState
 
 
-async def on_change(message: AbstractMessage):
+async def on_change(message: IncomingMessage):
+    print("===DEBUG===", message, type(message))
     data = AuditModel.model_validate_json(message.body)
     if data.switch.state is SwitchState.OFF:
         return
@@ -26,3 +27,4 @@ async def on_change(message: AbstractMessage):
                       details="Switch was toggled on. Requesting to change state.",
                       transaction_id=uuid.uuid4()
                   ))
+    await message.ack()

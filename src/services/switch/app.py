@@ -47,7 +47,7 @@ async def get_switch_log(switch_name: str, websocket: WebSocket):
             if msg.get("type", None) == 'websocket.disconnect':
                 break
             await asyncio.sleep(1)
-    except WebSocketDisconnect:
+    except (WebSocketDisconnect, RuntimeError):
         pass
 
 
