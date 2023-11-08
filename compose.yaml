@@ -19,6 +19,8 @@ services:
     environment:
       REDIS: "redis://redis"
       AMQP__DSN: "amqp://guest@rabbit/"
+      SWITCHES: "[\"switch\", \"schalter\", \"växla\", \"spínač\", \"vaihtaa\"]"
+      ROOT_PATH: "/api"
   observer:
     build:
       context: .

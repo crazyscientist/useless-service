@@ -17,8 +17,8 @@ export default {
           return x
         });
         this.auditlog.push(entry);
-        this.loading = false;
       });
+      this.loading = false;
     }
   }
 }
@@ -55,6 +55,9 @@ export default {
             </p>
           </template>
           <template v-else>
+            <div class="alert alert-warning" v-if="auditlog.length === 0">
+              No log entries available.
+            </div>
             <template v-for="entry in auditlog">
               <h4>Transaction: <span class="font-monospace text-nowrap">{{ entry.id }}</span></h4>
               <table class="table table-striped table-sm">

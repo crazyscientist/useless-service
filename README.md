@@ -12,13 +12,16 @@ sudo apt install docker-compose-v2
 docker compose up
 ```
 
-This will expose a webserver on port 8000 on your host:
+This will expose a webserver on [port 8000 on your host](http://localhost:8000). The API will be 
+available via the `/api` prefix (see also the [docs](http://localhost:8000/api/docs)):
 
 ```shell
-curl http://localhost:8000/switch-1
+curl http://localhost:8000/api/switch
 
-  {"name":"switch-1","state":"off"}
+  {"name":"switch","state":"off"}
 ```
+
+Have fun with the useless machine. 🤣🥳
 
 ## Business Process
 

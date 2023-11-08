@@ -15,7 +15,11 @@ from .config import settings
 from .utils import validate_switch_name
 
 
-app = FastAPI()
+app = FastAPI(title="Useless Machine API",
+              summary="Machine to toggle a switch off",
+              description="This API provides the interface for external users to interact with "
+                          "the switches of the useless machine",
+              version="१.६.९९")
 
 
 @app.get("/")
