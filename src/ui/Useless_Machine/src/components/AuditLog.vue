@@ -25,16 +25,14 @@ export default {
 </script>
 
 <template>
-  <div class="d-grid">
-    <button type="button" class="btn btn-secondary" id="auditlog-button" data-bs-toggle="modal"
-            data-bs-target="#auditlog-modal" @click="onClick">
-      <div class="d-flex align-items-center">
-        <img class="avatar border border-2 shadow"
-             src="../assets/national-cancer-institute-OHx5zVsv_gY-unsplash.jpg"/>
-        <span class="flex-grow-1 text-center fw-bold">Review audit log</span>
-      </div>
-    </button>
-  </div>
+  <button type="button" class="btn btn-secondary" id="auditlog-button" data-bs-toggle="modal"
+          data-bs-target="#auditlog-modal" @click="onClick">
+    <div class="d-flex align-items-center">
+      <img class="avatar border border-2 shadow me-3"
+           src="../assets/national-cancer-institute-OHx5zVsv_gY-unsplash.jpg"/>
+      <span class="flex-grow-1 text-center fw-bold">Review audit log</span>
+    </div>
+  </button>
   <div class="modal modal-lg" id="auditlog-modal">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
@@ -57,7 +55,7 @@ export default {
             </p>
           </template>
           <template v-else>
-            <template v-for="entry in auditlog.slice().reverse()">
+            <template v-for="entry in auditlog">
               <h4>Transaction: <span class="font-monospace text-nowrap">{{ entry.id }}</span></h4>
               <table class="table table-striped table-sm">
                 <thead>
@@ -67,7 +65,7 @@ export default {
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="detail in entry.details.slice().reverse()">
+                <tr v-for="detail in entry.details">
                   <td>{{ detail.action }}</td>
                   <td>{{ detail.timestamp.toLocaleString() }}</td>
                 </tr>

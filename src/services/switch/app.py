@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import typing
+from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Depends, status, Body, WebSocket, WebSocketDisconnect
 from redis.asyncio.client import Redis
@@ -37,17 +38,21 @@ async def get_switch_log(switch_name: str, websocket: WebSocket):
     try:
         routing_key = RoutingKey(switch=switch_name, action="*")
         queue = await subscribe(settings=settings.amqp, routing_key=routing_key)
+        consumer_tag = uuid4().hex
 
         async def _private_callback(message):
-            await websocket.send_text(message.body)
+            try:
+                await websocket.send_text(message.body)
+            except RuntimeError:
+                await queue.cancel(consumer_tag=consumer_tag)
 
-        await queue.consume(callback=_private_callback)
+        await queue.consume(callback=_private_callback, consumer_tag=consumer_tag)
         while True:
             msg = await websocket.receive()
             if msg.get("type", None) == 'websocket.disconnect':
                 break
             await asyncio.sleep(1)
-    except (WebSocketDisconnect, RuntimeError):
+    except WebSocketDisconnect:
         pass
 
 

@@ -57,8 +57,9 @@ class Api {
         return data.state;
     }
 
-    async switchEvents({name, handler}) {
+    async activitySocket({name}) {
         const socket = new WebSocket(`ws://${location.host}${this.base}/${name}`);
+        return socket
         socket.addEventListener("message", handler);
     }
 
