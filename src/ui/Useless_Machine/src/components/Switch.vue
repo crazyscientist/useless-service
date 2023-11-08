@@ -10,26 +10,39 @@ export default {
       loaded: false,
       userChanged: false,
       chatLog: [],
-      websocket: null
+      websocket: null,
+      switches: []
     }
+  },
+  async created() {
+    this.switches = await this.$api.listSwitches();
   },
   async mounted() {
     await this.getSwitchValue();
     this.userChanged = false;
     await this.connectSocket();
   },
+  computed: {
+    validName() {
+      return this.switches.includes(this.$route.params.switchName);
+    }
+  },
   methods: {
     async connectSocket() {
       if (this.websocket !== null) {
         this.websocket.close();
       }
-      this.websocket = await this.$api.activitySocket({name: this.$route.params.switchName});
-      this.websocket.addEventListener("message", this.onMessage);
+      if (this.validName) {
+        this.websocket = await this.$api.activitySocket({name: this.$route.params.switchName});
+        this.websocket.addEventListener("message", this.onMessage);
+      }
     },
     async getSwitchValue() {
       this.loaded = false;
-      this.value = await this.$api.switchValue({name: this.$route.params.switchName});
-      this.loaded = true;
+      if (this.validName) {
+        this.value = await this.$api.switchValue({name: this.$route.params.switchName});
+        this.loaded = true;
+      }
     },
     async onClick() {
       this.userChanged = true;
@@ -71,27 +84,32 @@ export default {
 <template>
   <div class="container">
     <div class="card mt-5 shadow">
-      <div class="card-header text-bg-primary">
+      <div class="card-header" :class="{'text-bg-primary': validName, 'text-bg-danger': !validName}">
         <h1>
           {{ $route.params.switchName }}
         </h1>
       </div>
       <div class="card-body">
+        <h6 class="alert alert-danger text-center" v-if="!validName">
+          ⚠ This is no valid switch name ⚠
+        </h6>
         <div class="container">
           <div class="row g-2">
             <div class="col-md-6 d-flex flex-column justify-content-between px-2">
               <div class="d-flex justify-content-center my-5">
                 <div class="form-check form-switch" style="width: 15rem;">
                   <input class="form-check-input" type="checkbox" role="switch" id="switch"
-                         v-model="value" true-value="on" false-value="off" @click="onClick">
+                         v-model="value" true-value="on" false-value="off" @click="onClick"
+                         :disabled="!validName">
                 </div>
               </div>
               <div class="row">
                 <div class="col-6 d-grid">
-                  <AuditLog class="flex-grow-1"/>
+                  <AuditLog class="flex-grow-1" :disabled="!validName"/>
                 </div>
                 <div class="col-6 d-grid">
-                  <button type="button" class="btn btn-secondary" @click="clearLog">
+                  <button type="button" class="btn btn-secondary" @click="clearLog"
+                          :disabled="!validName">
                     <div class="d-flex align-items-center">
                       <img src="../assets/volodymyr-hryshchenko-V5vqWC9gyEU-unsplash.jpg"
                            class="avatar border border-2 shadow me-3">

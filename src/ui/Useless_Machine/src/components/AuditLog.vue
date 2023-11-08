@@ -6,6 +6,7 @@ export default {
       loading: true
     }
   },
+  props: ["disabled"],
   methods: {
     async onClick() {
       this.loading = true;
@@ -26,7 +27,7 @@ export default {
 
 <template>
   <button type="button" class="btn btn-secondary" id="auditlog-button" data-bs-toggle="modal"
-          data-bs-target="#auditlog-modal" @click="onClick">
+          data-bs-target="#auditlog-modal" @click="onClick" :disabled="disabled">
     <div class="d-flex align-items-center">
       <img class="avatar border border-2 shadow me-3"
            src="../assets/national-cancer-institute-OHx5zVsv_gY-unsplash.jpg"/>
