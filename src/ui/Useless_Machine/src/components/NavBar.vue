@@ -24,22 +24,27 @@ export default {
       <div class="collapse navbar-collapse" id="useless-machine-nav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink class="nav-link active" :to="{name: 'home'}">Home</RouterLink>
+            <RouterLink class="nav-link" :to="{name: 'home'}">Home</RouterLink>
           </li>
           <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-             aria-expanded="false">
-            Switches
-          </a>
-          <ul class="dropdown-menu">
-            <li v-for="switchName in switches">
-              <RouterLink class="dropdown-item"
-                          :to="{name: 'switch', params: {'switchName': switchName}}">
-                {{ switchName }}
-              </RouterLink>
-            </li>
-          </ul>
-        </li>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+               aria-expanded="false">
+              Switches
+            </a>
+            <ul class="dropdown-menu">
+              <li v-for="switchName in switches">
+                <RouterLink class="dropdown-item"
+                            :to="{name: 'switch', params: {'switchName': switchName}}">
+                  {{ switchName }}
+                </RouterLink>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/crazyscientist/useless-service/">
+              <img src="../assets/github-mark.svg" id="github" class="mx-3"/>
+            </a>
+          </li>
 
         </ul>
       </div>
@@ -48,5 +53,7 @@ export default {
 </template>
 
 <style scoped>
-
+#github {
+  height: 1.75rem;
+}
 </style>
