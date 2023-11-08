@@ -7,9 +7,13 @@ from ...libs.models import AuditModel, AuditAction, SwitchModel, SwitchState
 from . import on_change
 
 
+async def ack(*args, **kwargs):
+    ...
+
+
 class ObserverTest(IsolatedAsyncioTestCase):
     def create_message(self, state: SwitchState) -> Message:
-        return Message(
+        msg = Message(
             body=AuditModel(
                 timestamp=datetime.datetime.now(tz=datetime.UTC),
                 action=AuditAction.CHANGED,
@@ -17,6 +21,8 @@ class ObserverTest(IsolatedAsyncioTestCase):
             ).model_dump_json().encode(),
             content_type="text/json"
         )
+        msg.ack = ack
+        return msg
 
     async def test_switch_on(self):
         with mock.patch("src.services.observer.publish") as mocked_publish:

@@ -11,7 +11,6 @@ from ...libs.models import AuditModel, AuditAction, SwitchState
 
 
 async def on_change(message: IncomingMessage):
-    print("===DEBUG===", message, type(message))
     data = AuditModel.model_validate_json(message.body)
     if data.switch.state is SwitchState.OFF:
         return

@@ -9,6 +9,10 @@ from ...libs.models import AuditAction, AuditModel, SwitchState, SwitchModel
 from . import on_action, get_transaction, LOG_TEMPLATE
 
 
+async def ack(*args, **kwargs):
+    ...
+
+
 class AuditorTest(IsolatedAsyncioTestCase):
     switch = SwitchModel(name="switch-1", state=SwitchState.ON)
     transaction_id = uuid4()
@@ -19,7 +23,7 @@ class AuditorTest(IsolatedAsyncioTestCase):
         await self.redis.flushall()
 
     def create_message(self, action: AuditAction) -> Message:
-        return Message(
+        msg = Message(
             body=AuditModel(
                 timestamp=datetime.datetime.now(tz=datetime.UTC),
                 action=action,
@@ -28,6 +32,8 @@ class AuditorTest(IsolatedAsyncioTestCase):
             ).model_dump_json().encode(),
             content_type="text/json"
         )
+        msg.ack = ack
+        return msg
 
     async def test_request(self):
         await on_action(self.create_message(AuditAction.REQUEST))
