@@ -14,12 +14,12 @@ export default {
       switches: []
     }
   },
-  async created() {
-    this.switches = await this.$api.listSwitches();
-  },
   async mounted() {
-    await this.getSwitchValue();
     this.userChanged = false;
+    const switches = await this.$api.listSwitches();
+    this.switches.length = 0;
+    this.switches.push(...switches);
+    await this.getSwitchValue();
     await this.connectSocket();
   },
   computed: {
@@ -41,8 +41,8 @@ export default {
       this.loaded = false;
       if (this.validName) {
         this.value = await this.$api.switchValue({name: this.$route.params.switchName});
-        this.loaded = true;
       }
+      this.loaded = true;
     },
     async onClick() {
       this.userChanged = true;
@@ -85,13 +85,13 @@ export default {
 <template>
   <div class="container">
     <div class="card mt-5 shadow">
-      <div class="card-header" :class="{'text-bg-primary': validName, 'text-bg-danger': !validName}">
+      <div class="card-header" :class="{'text-bg-primary': validName, 'text-bg-danger': !validName && loaded}">
         <h1>
           {{ $route.params.switchName }}
         </h1>
       </div>
       <div class="card-body">
-        <h6 class="alert alert-danger text-center" v-if="!validName">
+        <h6 class="alert alert-danger text-center" v-if="!validName && loaded">
           ⚠ This is no valid switch name ⚠
         </h6>
         <div class="container">
