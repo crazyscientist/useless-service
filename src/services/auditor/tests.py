@@ -5,7 +5,7 @@ from uuid import uuid4
 from aio_pika import Message
 
 from ...libs.cache import get_redis
-from ...libs.models import AuditAction, AuditModel, SwitchState, SwitchModel
+from ...libs.models import AuditAction, AuditModel, AuditTransaction, SwitchState, SwitchModel
 from . import on_action, get_transaction, LOG_TEMPLATE
 
 
@@ -37,7 +37,9 @@ class AuditorTest(IsolatedAsyncioTestCase):
 
     async def test_request(self):
         await on_action(self.create_message(AuditAction.REQUEST))
-        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id)
+        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id,
+                                            timestamp=datetime.datetime.now(tz=datetime.UTC),
+                                            switch=self.switch.name)
         self.assertEqual(len(transaction.details), 1)
         self.assertEqual(transaction.details[0].action, AuditAction.REQUEST)
 
@@ -47,7 +49,9 @@ class AuditorTest(IsolatedAsyncioTestCase):
     async def test_approved(self):
         await on_action(self.create_message(AuditAction.REQUEST))
         await on_action(self.create_message(AuditAction.APPROVED))
-        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id)
+        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id,
+                                            timestamp=datetime.datetime.now(tz=datetime.UTC),
+                                            switch=self.switch.name)
         self.assertEqual(len(transaction.details), 2)
         self.assertEqual(transaction.details[0].action, AuditAction.REQUEST)
 
@@ -57,20 +61,35 @@ class AuditorTest(IsolatedAsyncioTestCase):
     async def test_denied(self):
         await on_action(self.create_message(AuditAction.REQUEST))
         await on_action(self.create_message(AuditAction.DENIED))
-        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id)
-        self.assertEqual(len(transaction.details), 2)
-        self.assertEqual(transaction.details[0].action, AuditAction.REQUEST)
 
-        auditlog = await self.redis.smembers(LOG_TEMPLATE.format(self.switch.name))
-        self.assertEqual(len(auditlog), 1)
+        with self.subTest("Cache"):
+            transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id,
+                                                timestamp=datetime.datetime.now(tz=datetime.UTC),
+                                                switch=self.switch.name)
+            self.assertEqual(len(transaction.details), 0)
+
+        with self.subTest("Auditlog"):
+            auditlog = await self.redis.smembers(LOG_TEMPLATE.format(self.switch.name))
+            self.assertEqual(len(auditlog), 1)
+            auditlog = [AuditTransaction.model_validate_json(x) for x in auditlog]
+            self.assertEqual(len(auditlog[0].details), 2)
+            self.assertEqual(auditlog[0].details[0].action, AuditAction.REQUEST)
 
     async def test_executed(self):
         await on_action(self.create_message(AuditAction.REQUEST))
         await on_action(self.create_message(AuditAction.APPROVED))
         await on_action(self.create_message(AuditAction.EXECUTED))
-        transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id)
-        self.assertEqual(len(transaction.details), 3)
-        self.assertEqual(transaction.details[0].action, AuditAction.REQUEST)
 
-        auditlog = await self.redis.smembers(LOG_TEMPLATE.format(self.switch.name))
-        self.assertEqual(len(auditlog), 1)
+        with self.subTest("Cache"):
+            transaction = await get_transaction(redis=self.redis, transaction_id=self.transaction_id,
+                                                timestamp=datetime.datetime.now(tz=datetime.UTC),
+                                                switch=self.switch.name)
+            # Transaction is finished and no longer cached
+            self.assertEqual(len(transaction.details), 0)
+
+        with self.subTest("Auditlog"):
+            auditlog = await self.redis.smembers(LOG_TEMPLATE.format(self.switch.name))
+            self.assertEqual(len(auditlog), 1)
+            auditlog = [AuditTransaction.model_validate_json(x) for x in auditlog]
+            self.assertEqual(len(auditlog[0].details), 3)
+            self.assertEqual(auditlog[0].details[0].action, AuditAction.REQUEST)

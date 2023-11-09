@@ -56,7 +56,7 @@ class WorkerTest(IsolatedAsyncioTestCase):
             ))
             self.assertEqual(mocked_publish.call_count, 1)
             published = mocked_publish.call_args_list[0].kwargs["message"]
-            self.assertEqual(published.action, AuditAction.EXECUTED)
+            self.assertEqual(published.action, AuditAction.ABORTED)
             self.assertEqual(published.switch.state, SwitchState.OFF)
             self.assertIn("already set to", published.details)
 
@@ -74,6 +74,6 @@ class WorkerTest(IsolatedAsyncioTestCase):
             ))
             self.assertEqual(mocked_publish.call_count, 1)
             published = mocked_publish.call_args_list[0].kwargs["message"]
-            self.assertEqual(published.action, AuditAction.EXECUTED)
+            self.assertEqual(published.action, AuditAction.ABORTED)
             self.assertEqual(published.switch.state, SwitchState.ON)
             self.assertIn("foo bar", published.details)

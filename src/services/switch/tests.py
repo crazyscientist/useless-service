@@ -69,7 +69,9 @@ class SwitchTest(IsolatedAsyncioTestCase):
         await redis.sadd("auditlog.switch-1",
                          AuditTransaction(id=uuid4(),
                                           switch="switch-1",
-                                          details=[]).model_dump_json())
+                                          details=[],
+                                          timestamp=datetime.datetime.now(tz=datetime.UTC))
+                         .model_dump_json())
 
         response = self.client.get("/switch-1/audit-log")
         self.assertEqual(response.status_code, 200)
