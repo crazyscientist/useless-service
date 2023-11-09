@@ -13,12 +13,14 @@ export default {
       const entries = await this.$api.auditLog({name: this.$route.params.switchName});
       this.auditlog.length = 0;
       entries.forEach(entry => {
+        entry.timestamp = new Date(entry.timestamp);
         entry.details = entry.details.map(x => {
           x.timestamp = new Date(x.timestamp);
           return x
         });
         this.auditlog.push(entry);
       });
+      this.auditlog.sort((x, y) => y.timestamp - x.timestamp);
       this.loading = false;
     }
   }
@@ -61,6 +63,9 @@ export default {
             </div>
             <template v-for="entry in auditlog">
               <h4>Transaction: <span class="font-monospace text-nowrap">{{ entry.id }}</span></h4>
+              <p class="text-end p-0 m-0 text-muted">
+                <small>{{ entry.timestamp.toLocaleString() }}</small>
+              </p>
               <table class="table table-striped table-sm">
                 <thead>
                 <tr>

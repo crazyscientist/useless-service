@@ -1,3 +1,4 @@
+import datetime
 import typing
 from uuid import UUID
 
@@ -12,14 +13,14 @@ LOG_TEMPLATE = "auditlog.{}"
 TRANSACTION_TEMPLATE = "transaction.{}"
 
 
-async def get_transaction(redis: Redis, transaction_id: UUID, switch: typing.Optional[str] = None) \
-        -> AuditTransaction:
+async def get_transaction(redis: Redis, transaction_id: UUID, timestamp: datetime.datetime,
+                          switch: typing.Optional[str] = None) -> AuditTransaction:
     key = TRANSACTION_TEMPLATE.format(transaction_id)
     transaction = await redis.get(key)
     if transaction:
         return AuditTransaction.model_validate_json(transaction)
 
-    return AuditTransaction(id=transaction_id, switch=switch, details=[])
+    return AuditTransaction(id=transaction_id, switch=switch, details=[], timestamp=timestamp)
 
 
 async def on_action(message: IncomingMessage):
@@ -32,11 +33,13 @@ async def on_action(message: IncomingMessage):
 
     redis = await get_redis()
     transaction = await get_transaction(redis=redis, transaction_id=data.transaction_id,
-                                        switch=data.switch.name)
+                                        switch=data.switch.name, timestamp=data.timestamp)
     transaction.details.append(TransactionDetail(timestamp=data.timestamp, action=data.action))
-    await redis.set(name=transaction_key, value=transaction.model_dump_json(), ex=3600)
 
-    if data.action in [AuditAction.EXECUTED, AuditAction.DENIED]:
+    if data.action in [AuditAction.ABORTED, AuditAction.EXECUTED, AuditAction.DENIED]:
+        transaction.timestamp = data.timestamp
         await redis.sadd(LOG_TEMPLATE.format(data.switch.name), transaction.model_dump_json())
-
+        await redis.delete(transaction_key)
+    else:
+        await redis.set(name=transaction_key, value=transaction.model_dump_json(), ex=3600)
     await message.ack()

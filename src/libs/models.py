@@ -22,6 +22,7 @@ class AuditAction(enum.StrEnum):
     APPROVED = "approved"
     DENIED = "denied"
     EXECUTED = "executed"
+    ABORTED = "aborted"
 
 
 class AuditModel(BaseModel):
@@ -39,5 +40,6 @@ class TransactionDetail(BaseModel):
 
 class AuditTransaction(BaseModel):
     id: UUID4
+    timestamp: datetime.datetime
     switch: str
     details: typing.List[TransactionDetail] = []

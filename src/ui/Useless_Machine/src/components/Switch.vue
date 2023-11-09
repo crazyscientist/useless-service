@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     async connectSocket() {
-      if (this.websocket !== null) {
+      if (this.websocket?.readyState < 2) {
         this.websocket.close();
       }
       if (this.validName) {
@@ -75,6 +75,7 @@ export default {
       if (newValue) {
         this.chatLog.length = 0;
         await this.connectSocket();
+        await this.getSwitchValue();
       }
     }
   }

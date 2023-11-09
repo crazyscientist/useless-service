@@ -41,6 +41,9 @@ export default {
             </ul>
           </li>
           <li class="nav-item">
+            <RouterLink class="nav-link" :to="{name: 'about'}">About</RouterLink>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="https://github.com/crazyscientist/useless-service/">
               <img src="../assets/github-mark.svg" id="github" class="mx-3"/>
             </a>

@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 
 from aio_pika import IncomingMessage
 
+from ...libs import delay
 from ...libs.amqp import publish, RoutingKey
 from ...libs.config import settings
 from ...libs.http import get_client
@@ -57,6 +58,7 @@ async def on_request(message: IncomingMessage):
             await message.ack()
             return
 
+    await delay()
     await publish(settings=settings.amqp,
                   routing_key=RoutingKey(switch=data.switch.name, action=AuditAction.APPROVED),
                   message=AuditModel(

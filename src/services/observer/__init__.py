@@ -5,6 +5,7 @@ import uuid
 
 from aio_pika import IncomingMessage
 
+from ...libs import delay
 from ...libs.amqp import publish, RoutingKey
 from ...libs.config import settings
 from ...libs.models import AuditModel, AuditAction, SwitchState
@@ -15,7 +16,7 @@ async def on_change(message: IncomingMessage):
     if data.switch.state is SwitchState.OFF:
         return
 
-    await asyncio.sleep(1 + random.random() * 3)
+    await delay(scale=1)
     key = RoutingKey(switch=data.switch.name, action=AuditAction.REQUEST)
     await publish(settings=settings.amqp,
                   routing_key=key,

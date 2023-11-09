@@ -11,6 +11,8 @@ export default {
         return 'text-success-emphasis bg-success-subtle';
       } else if (this.content.action === 'denied') {
         return 'text-danger bg-danger-subtle';
+      } else if (this.content.action === 'aborted') {
+        return 'bg-warning-subtle';
       }
     },
     avatarImg() {
@@ -18,7 +20,7 @@ export default {
         return 'manager';
       } else if (this.content.action === 'request') {
         return 'observer';
-      } else if (this.content.action === 'executed') {
+      } else if (['executed', 'aborted'].includes(this.content.action)) {
         return 'worker';
       } else if (this.content.action === 'changed') {
         return 'megaphone';
