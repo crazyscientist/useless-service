@@ -28,6 +28,12 @@ export default {
       </div>
     </div>
     <div class="row text-center">
+      <div class="col-12">
+        <h1>The Process</h1>
+        <img src="../assets/process.svg" style="max-width: 60rem;"/>
+      </div>
+    </div>
+    <div class="row text-center">
       <h1 class="col-12 my-3">Behind the scenes &mdash; Meet the team</h1>
     </div>
     <div class="row">
