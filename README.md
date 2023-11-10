@@ -26,6 +26,7 @@ Have fun with the useless machine. 🤣🥳
 ## Business Process
 
 ![](http://www.plantuml.com/plantuml/svg/ZP9FIyD04CNlyoc6Uj5316rF4QJz02hu1o-vRBAJRMZSYPj95SJlxaut9g0MF6NvvRsTzuPTzsA232yjv4yzXHnDZ_Gk5Bnf0JfJxOmZt7GTVW1YVbT6qNxKbImN2c-CDsvcbygUEUncj5Iq6MmZFB4LHBXuU6kasYwKdVQ7ynd09y1t1in2TZtzmfEsyPG7ibTwE2-vjPZZ8plN4YOHieT9dmtHhJcFE6zPceeA7xSWyLDjZNS4QaY3jSuHwpsz3jGBIXmUkTEv1tbci-HS_ktKRGRU4nflaOEbKFZvadgi0Ng1vlzV-nW-gGhFTGrZ1Pk2h3Hjnq6cWB-nplg9r-HjV1fV)
+![](http://www.plantuml.com/plantuml/svg/bL5BQi0W4DrxYe5ip1NC9ZSeb2wx2N4qKZjQdJJqzZKQAbbaqG55tkSzr3dpadZ_zA8UnB4vZo3puNZTW8Er7lK8BeCCD0eeerxnQyVCZNLaAngCAGkQSQgGCo3NFIKaVgT6G6bX784tf9vupX0NZpOXabfYJE4RfpzElIIDwTxtqFdFtYl_hTxp2ZfZUnZwZ20BTBTa3h5hI3iZ7jH3TFIXDDBF96xkxYnxU_VchEnSmFDRVW40)
 
 An **external operator** can toggle the switch.
 
